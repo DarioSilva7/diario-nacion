@@ -1,0 +1,56 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: la_nacion_postgres
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - la_nacion_network
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - la_nacion_network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: la_nacion_app
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      DB_HOST: postgres
+      REDIS_URL: 'redis://redis:6379'
+      DB_USER: ${DB_USER}
+      DB_NAME: ${DB_NAME}
+      DB_PASS: ${DB_PASS}
+      DB_PORT: 5432
+    ports:
+      - "${PORT}:${PORT}"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - la_nacion_network
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./uploads:/app/uploads
+
+volumes:
+  postgres_data:
+  redis_data:
+  uploads:
+
+networks:
+  la_nacion_network:
