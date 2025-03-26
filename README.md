@@ -39,7 +39,7 @@ Otras: Docker, Multer (upload de archivos)
 1. Clonar el repositorio:
 
 ```
-git clone [url-del-repositorio]
+git clone https://github.com/DarioSilva7/diario-nacion.git
 cd la-nacion-challenge
 ```
 
